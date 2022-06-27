@@ -27,5 +27,22 @@ exports.create = async (req, res) => {
         res.status(400).json({ error: error, success: false })
 
     }
+}
+
+exports.getAllDoctors = async (req, res) => {
+
+    try {
+
+        const query = await Doctors.find({})
+
+        if (query) {
+            return res.status(200).json({ success: true, data: query })
+        }
+        return res.status(200).json({ success: true })
+
+
+    } catch (error) {
+        res.status(400).json({ error: error, success: false })
+    }
 
 }

@@ -8,13 +8,14 @@ module.exports = (mongoose) => {
         gender: { type: String },
         age: { type: Number },
         address: { type: String },
-        profileImg: { type: String }
+        month: { type: String },
+        day: { type: Number },
+        time: { type: String },
     },
         { timestamps: true }
     )
 
-    const Patients = mongoose.model('patients', schema)
+    const Appointments = mongoose.model('appointments', schema)
 
-    return Patients
-
+    return Appointments
 }

@@ -4,6 +4,8 @@ const db = require('./database/models/index');
 const bodyParser = require('body-parser')
 const patientsRoutes = require('./routes/patients/index')
 const doctorsRoutes = require('./routes/doctors/index')
+const appointmentsRoutes = require('./routes/appointments/index')
+const path = require('path')
 const http = require('http');
 
 const cors = require('cors');
@@ -22,10 +24,15 @@ const corsOptions = {
     methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH']
 }
 
+
 app.use(cors(corsOptions))
-app.use(express.urlencoded({ extended: true }))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json())
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: true }))
+// app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: true }))
+
+
 
 // Database connection
 db.mongoose.connect(db.url, {
@@ -60,6 +67,7 @@ app.use(function (req, res, next) {
 //Routes
 app.use('/api/patients', patientsRoutes)
 app.use('/api/doctors', doctorsRoutes)
+app.use('/api/appointments', appointmentsRoutes)
 
 server.listen(PORT, () => {
     console.log(`Running the app on PORT  ${PORT}`)
