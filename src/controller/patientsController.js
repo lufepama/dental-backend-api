@@ -39,6 +39,32 @@ exports.create = async (req, res) => {
 
 }
 
+exports.updateInformation = async (req, res) => {
+
+    try {
+        const patientInfo = req.body
+        const url = req.protocol + '://' + req.get('host')
+
+        const query = await Patients.findOneAndUpdate({ _id: patientInfo._id }, {
+            firstName: patientInfo.firstName,
+            lastName: patientInfo.lastName,
+            phoneNumber: patientInfo.phoneNumber,
+            ocupation: patientInfo.ocupation,
+            gender: patientInfo.gender,
+            age: patientInfo.age,
+            address: patientInfo.address,
+            fullName: patientInfo.firstName + ' ' + patientInfo.lastName,
+            profileImg: url + DIR + req.file.filename
+        })
+
+
+
+    } catch (error) {
+
+    }
+}
+
+
 exports.deletePatient = async (req, res) => {
 
     try {

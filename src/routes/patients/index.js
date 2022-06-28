@@ -1,6 +1,6 @@
 const routes = require('express').Router();
 const controller = require('../../controller/patientsController')
-const mwAuth = require('../../middlewares/validationAuth')
+const patientExists = require('../../middlewares/patients/index')
 
 const multer = require('multer')
 let uuidv4 = require('uuid').v4
@@ -35,6 +35,8 @@ var upload = multer({
 routes.post('/create', upload.single('patientImg'), controller.create)
 
 routes.get('/all-patients', controller.getAllPatients)
+
+routes.put('/update-patient', patientExists, controller.updateInformation)
 
 routes.delete('/delete-patient/:id', controller.deletePatient)
 
