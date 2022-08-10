@@ -25,8 +25,6 @@ exports.create = async (req, res) => {
         }, (err, newUser) => {
             if (err) { return res.status(400).json({ message: `Problemon... ${error}` }) }
 
-            console.log('saved', newUser)
-
         })
 
         res.status(200).json({ message: 'Register user', success: true })
@@ -34,7 +32,6 @@ exports.create = async (req, res) => {
 
     } catch (error) {
         res.status(400).json({ message: `Problemon... ${error}` })
-
     }
 
 }
@@ -43,7 +40,6 @@ exports.updateInformation = async (req, res) => {
 
     try {
         const patientInfo = req.body
-        const url = req.protocol + '://' + req.get('host')
 
         const query = await Patients.findOneAndUpdate({ _id: patientInfo._id }, {
             firstName: patientInfo.firstName,
@@ -54,13 +50,15 @@ exports.updateInformation = async (req, res) => {
             age: patientInfo.age,
             address: patientInfo.address,
             fullName: patientInfo.firstName + ' ' + patientInfo.lastName,
-            profileImg: url + DIR + req.file.filename
         })
 
+        console.log({ query });
 
+        res.status(200).json({ message: 'Register userd', success: true })
 
     } catch (error) {
-
+        console.log({ error })
+        res.status(400).json({ message: 'Register user', success: false })
     }
 }
 
@@ -87,12 +85,25 @@ exports.getAllPatients = async (req, res) => {
     try {
 
         const response = await Patients.find({})
-        console.log('res', response)
 
         res.status(200).json({ message: 'There you have', success: true, data: response })
 
     } catch (error) {
         console.log('err', error)
+    }
+
+}
+
+exports.updatePersonalInformation = async (req, res) => {
+
+    try {
+        const patientId = req.params.id
+
+        console.log('body', req.body)
+
+        res.status(200).json({ message: 'oK', success: true })
+    } catch (error) {
+
     }
 
 }

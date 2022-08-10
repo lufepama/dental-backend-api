@@ -1,22 +1,22 @@
 const db = require('../../database/models/index')
 const Patient = db.patients
+const objectID = require('mongodb').ObjectID
 
-
-
-exports.patientExists = async (req, res) => {
+exports.patientExists = async (req, res, next) => {
 
     try {
         const patientId = req.body._id
-        const query = await Patient.findById(patientId).exec()
+        const query = await Patient.findById(objectID(patientId)).exec()
 
         if (query) {
-            return res.status(201).send({ message: 'El usuario no existe..' })
+            next()
+            return
         }
-        return res.status(404).send({ message: 'El paciente no existe..' })
+
+        return res.status(401).send({ message: 'Ha habido un problema..' })
 
     } catch (error) {
-        res.status(400).send({ message: 'Ha habido un problema..' })
-
+        return res.status(400).send({ message: 'Ha habido un problema..' })
     }
 
 }
