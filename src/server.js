@@ -29,8 +29,6 @@ app.use(cors(corsOptions))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-// app.use(bodyParser.json())
-// app.use(bodyParser.urlencoded({ extended: true }))
 
 
 
@@ -67,7 +65,7 @@ app.use(function (req, res, next) {
 //Routes
 app.use('/api/patients', patientsRoutes)
 app.use('/api/doctors', doctorsRoutes)
-app.use('/api/appointments', appointmentsRoutes)
+app.use('/api/appointment', appointmentsRoutes)
 
 server.listen(PORT, () => {
     console.log(`Running the app on PORT  ${PORT}`)

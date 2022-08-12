@@ -15,8 +15,6 @@ exports.create = async (req, res) => {
             phoneNumber: doctorData.phoneNumber,
             address: doctorData.address
         }, (err, newUser) => {
-            if (err) { console.log('err', err) }
-
             console.log('saved', newUser)
 
         })
