@@ -1,6 +1,7 @@
 const db = require('../database/models/index')
 const Appointments = db.appointments
 const PatientAppointments = db.patientAppointments
+const objectID = require('mongodb').ObjectID
 
 
 exports.create = async (req, res) => {
@@ -46,7 +47,7 @@ exports.createAppointment = async (req, res) => {
         })
 
     } catch (error) {
-        return res.status(200).json({ message: error, success: false })
+        return res.status(400).json({ message: error, success: false })
     }
 }
 
@@ -65,6 +66,49 @@ exports.getAgenda = async (req, res) => {
     } catch (error) {
         return res.status(200).json({ message: error, success: false })
 
+    }
+
+}
+
+exports.updateAppointment = async (req, res) => {
+
+    try {
+
+        const weekOfYear = '43'
+        const doctorAgendaId = req.body.doctorAgendaId
+        const appointmentCellId = req.body.appointmentCellId
+        const updatedDescription = 'Es un ejemplo de descripcion modificada'
+        const updatedSpecialsit = 'CAREMAZO'
+
+        PatientAppointments.updateOne(
+            {
+                "weekOfYear": weekOfYear,
+                "appointments": {
+                    $elemMatch: {
+                        "_id": objectID(doctorAgendaId),
+                        "hoursAppointments._id": objectID(appointmentCellId)
+                    },
+                }
+            },
+            {
+                $set: {
+                    "appointments.$[outer].hoursAppointments.$[inner].description": updatedDescription,
+                    "appointments.$[outer].hoursAppointments.$[inner].specialist": updatedSpecialsit
+                },
+                arrayFilters: [
+                    { "outer._id": objectID(doctorAgendaId) },
+                    { "inner._id": objectID(appointmentCellId) },
+
+                ]
+            }
+
+        )
+
+        console.log('entree en updated', appointmentCellId)
+        return res.status(201).json({ success: true, appointmentId: appointmentCellId })
+
+    } catch (error) {
+        return res.status(404).json({ success: false, error: error })
     }
 
 }
