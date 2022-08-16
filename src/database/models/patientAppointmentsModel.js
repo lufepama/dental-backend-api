@@ -7,6 +7,7 @@ module.exports = (mongoose) => {
             doctorId: { type: String },
             doctorName: { type: String },
             isActive: { type: Boolean },
+            doctorAppointmentsId: { type: String },
             hoursAppointments: [{
                 hour: { type: String },
                 squares: { type: String },
@@ -14,7 +15,8 @@ module.exports = (mongoose) => {
                 patientId: { type: String },
                 description: { type: String },
                 specialist: { type: String },
-                isDisplayed: { type: Boolean, default: true }
+                isDisplayed: { type: Boolean, default: true },
+                appointmentId: { type: String },
             }]
 
         }]

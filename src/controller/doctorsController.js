@@ -27,16 +27,24 @@ exports.create = async (req, res) => {
     }
 }
 
-exports.getAllDoctors = async (req, res) => {
+exports.getAllDoctors = async (req, res, next) => {
 
     try {
 
         const query = await Doctors.find({})
 
-        if (query) {
-            return res.status(200).json({ success: true, data: query })
+        // To use this function as midleware in appointmentsController
+        if (next) {
+            req.doctors = query
+            next()
         }
-        return res.status(200).json({ success: true })
+        else {
+            if (query) {
+                return res.status(200).json({ success: true, data: query })
+            }
+            return res.status(200).json({ success: true })
+        }
+
 
 
     } catch (error) {

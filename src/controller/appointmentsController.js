@@ -2,7 +2,8 @@ const db = require('../database/models/index')
 const Appointments = db.appointments
 const PatientAppointments = db.patientAppointments
 const objectID = require('mongodb').ObjectID
-
+const myController = require('./appointmentsController')
+const agendaHelpers = require('../helpers/appointments/generateAgendaStructure')
 
 exports.create = async (req, res) => {
 
@@ -51,6 +52,25 @@ exports.createAppointment = async (req, res) => {
     }
 }
 
+exports.generateAnnualAgenda = async (req, res) => {
+
+    try {
+
+        const doctors = req.doctors
+
+        const response = agendaHelpers.getAppointmentObject('doctorName', 'doctorId')
+
+        console.log({ response })
+
+        return res.status(201).json({ success: true })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ success: false })
+    }
+
+}
+
 exports.getAgenda = async (req, res) => {
 
     try {
@@ -80,34 +100,36 @@ exports.updateAppointment = async (req, res) => {
         const updatedDescription = 'Es un ejemplo de descripcion modificada'
         const updatedSpecialsit = 'CAREMAZO'
 
-        PatientAppointments.updateOne(
+        const resp = await PatientAppointments.updateOne(
             {
-                "weekOfYear": weekOfYear,
-                "appointments": {
-                    $elemMatch: {
-                        "_id": objectID(doctorAgendaId),
-                        "hoursAppointments._id": objectID(appointmentCellId)
+                'weekOfYear': weekOfYear,
+                'appointments': {
+                    '$elemMatch': {
+                        'doctorAppointmentsId': 'doctorAppointmentsId',
+                        'hoursAppointments.appointmentId': 'appointmentId'
                     },
                 }
             },
             {
-                $set: {
-                    "appointments.$[outer].hoursAppointments.$[inner].description": updatedDescription,
-                    "appointments.$[outer].hoursAppointments.$[inner].specialist": updatedSpecialsit
-                },
-                arrayFilters: [
-                    { "outer._id": objectID(doctorAgendaId) },
-                    { "inner._id": objectID(appointmentCellId) },
-
+                '$set': {
+                    'appointments.$[outer].hoursAppointments.$[inner].description': 'updatedDescription',
+                    'appointments.$[outer].hoursAppointments.$[inner].specialist': ''
+                }
+            },
+            {
+                'arrayFilters': [
+                    { 'outer.doctorAppointmentsId': 'doctorAppointmentsId' },
+                    { 'inner.appointmentId': 'appointmentId' },
                 ]
             }
-
         )
 
-        console.log('entree en updated', appointmentCellId)
-        return res.status(201).json({ success: true, appointmentId: appointmentCellId })
+
+
+        return res.status(201).json({ success: true, resp: resp })
 
     } catch (error) {
+        console.log(error)
         return res.status(404).json({ success: false, error: error })
     }
 
