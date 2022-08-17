@@ -14,7 +14,7 @@ const getBasicObject = (hour) => {
         patientId: '',
         description: '',
         specialist: '',
-        isDisplayed: '',
+        isDisplayed: false,
         appointmentId: uuidv4()
     }
 
