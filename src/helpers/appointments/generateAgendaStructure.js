@@ -9,12 +9,12 @@ const getBasicObject = (hour) => {
 
     return {
         hour: hour,
-        squares: "",
+        squares: '1',
         isOccupated: false,
         patientId: '',
         description: '',
         specialist: '',
-        isDisplayed: false,
+        isDisplayed: true,
         appointmentId: uuidv4()
     }
 

@@ -66,8 +66,6 @@ exports.generateAnnualAgenda = async (req, res) => {
 
         const { weekOfYear, currentYear } = appointmentMethods.getWeekOfTheYear()
 
-        // const query = await PatientAppointments.find({ weekOfYear: weekOfYear })
-
         if (weekOfYear && currentYear) {
             await PatientAppointments.create({
                 weekOfYear: weekOfYear,
