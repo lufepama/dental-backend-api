@@ -1,12 +1,14 @@
 const routes = require('express').Router();
 const controller = require('../../controller/appointmentsController')
 const doctorController = require('../../controller/doctorsController')
+const appointmentMiddleware = require('../../middlewares/appointments/index')
 
 
 //POST
-routes.post('/create', controller.create)
+// routes.post('/create', controller.create)
+// routes.post('/create-appointment', controller.createAppointment)
+routes.post('/generate-daily-agenda', appointmentMiddleware.doctorsToAppointment, controller.generateDailyAgenda)
 routes.post('/create-appointment', controller.createAppointment)
-routes.post('/generate-annual-agenda', doctorController.getAllDoctors, controller.generateAnnualAgenda)
 
 //GET
 routes.get('/get-agenda/:week', controller.getAgenda)

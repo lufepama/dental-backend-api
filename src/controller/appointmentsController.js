@@ -6,54 +6,54 @@ const myController = require('./appointmentsController')
 const agendaHelpers = require('../helpers/appointments/generateAgendaStructure')
 const appointmentMethods = require('../helpers/appointments/index')
 
-exports.create = async (req, res) => {
+// exports.create = async (req, res) => {
 
-    try {
-        const patientData = req.body
+//     try {
+//         const patientData = req.body
 
-        Appointments.create({
-            firstName: patientData.firstName,
-            lastName: patientData.lastName,
-            phoneNumber: patientData.phoneNumber,
-            ocupation: patientData.ocupation,
-            gender: patientData.gender,
-            age: patientData.age,
-            address: patientData.address,
-            month: patientData.selectedMonth,
-            day: patientData.selectedDay,
-            time: patientData.time,
-        }, (err, newAppointment) => {
-            if (err) { console.log('err', err) }
-            res.status(200).json({ message: 'Register Appointmet', success: true, data: newAppointment })
-        })
+//         Appointments.create({
+//             firstName: patientData.firstName,
+//             lastName: patientData.lastName,
+//             phoneNumber: patientData.phoneNumber,
+//             ocupation: patientData.ocupation,
+//             gender: patientData.gender,
+//             age: patientData.age,
+//             address: patientData.address,
+//             month: patientData.selectedMonth,
+//             day: patientData.selectedDay,
+//             time: patientData.time,
+//         }, (err, newAppointment) => {
+//             if (err) { console.log('err', err) }
+//             res.status(200).json({ message: 'Register Appointmet', success: true, data: newAppointment })
+//         })
 
-        res.status(300).json({ message: 'Error', success: false, })
+//         res.status(300).json({ message: 'Error', success: false, })
 
-    } catch (error) {
-        res.status(400).json({ error: error, success: false })
-    }
-}
+//     } catch (error) {
+//         res.status(400).json({ error: error, success: false })
+//     }
+// }
 
-exports.createAppointment = async (req, res) => {
+// exports.createAppointment = async (req, res) => {
 
-    try {
-        const data = req.body
-        const { weekOfYear, year, appointments } = data
-        PatientAppointments.create({
-            weekOfYear: weekOfYear,
-            year: year,
-            appointments: appointments
-        }, (err, newAppointment) => {
-            if (err) { return res.status(400).json({ message: 'Register patient Appoint', success: true }) }
-            return res.status(200).json({ message: 'Register patient Appoint', success: true, data: newAppointment })
-        })
+//     try {
+//         const data = req.body
+//         const { weekOfYear, year, appointments } = data
+//         PatientAppointments.create({
+//             weekOfYear: weekOfYear,
+//             year: year,
+//             appointments: appointments
+//         }, (err, newAppointment) => {
+//             if (err) { return res.status(400).json({ message: 'Register patient Appoint', success: true }) }
+//             return res.status(200).json({ message: 'Register patient Appoint', success: true, data: newAppointment })
+//         })
 
-    } catch (error) {
-        return res.status(400).json({ message: error, success: false })
-    }
-}
+//     } catch (error) {
+//         return res.status(400).json({ message: error, success: false })
+//     }
+// }
 
-exports.generateAnnualAgenda = async (req, res) => {
+exports.generateDailyAgenda = async (req, res) => {
 
     try {
 
@@ -64,10 +64,11 @@ exports.generateAnnualAgenda = async (req, res) => {
             agendaAppointments.push(response)
         })
 
-        const { weekOfYear, currentYear } = appointmentMethods.getWeekOfTheYear()
+        const { weekOfYear, dayOfYear, currentYear } = appointmentMethods.getWeekOfTheYear()
 
         if (weekOfYear && currentYear) {
             await PatientAppointments.create({
+                dayOfYear: dayOfYear,
                 weekOfYear: weekOfYear,
                 year: currentYear,
                 appointments: agendaAppointments
@@ -95,7 +96,7 @@ exports.getAgenda = async (req, res) => {
 
         const agenda = await PatientAppointments.find({ weekOfYear: weekOfYear }).exec();
 
-        return res.status(200).json({ message: 'error', success: true, data: agenda })
+        return res.status(200).json({ success: true, data: agenda })
 
 
     } catch (error) {
@@ -144,6 +145,89 @@ exports.updateAppointment = async (req, res) => {
     } catch (error) {
         console.log(error)
         return res.status(404).json({ success: false, error: error })
+    }
+
+}
+
+exports.createAppointment = async (req, res) => {
+
+    try {
+
+        // const { arrayAppointmentsId, dayOfYear, weekOfYear, doctorAppointmentsId } = req.body
+
+        const weekOfYear = '34'
+        const dayOfYear = '230'
+        const year = '2022'
+        const doctorAppointmentsId = 'b6f573f4-2712-4b32-8508-32ee83dc4bae'
+        const arrayAppointmentsId = ['d105ccee-5694-4de2-bd7e-e872206036f5', 'cfa999ed-06d5-4744-8a3d-1128db647cd6', '45cacf4e-06d9-4d40-8e26-b4940b57b86b']
+
+        const lengthSquares = arrayAppointmentsId.length
+
+        const resp = await PatientAppointments.updateOne(
+            {
+                'weekOfYear': weekOfYear,
+                'dayOfYear': dayOfYear,
+                'year': year,
+                'appointments': {
+                    '$elemMatch': {
+                        'doctorAppointmentsId': doctorAppointmentsId,
+                        'hoursAppointments.appointmentId': {
+                            "$in": arrayAppointmentsId
+                        }
+                    },
+                }
+            },
+            {
+                '$set': {
+                    'appointments.$[outer].hoursAppointments.$[inner].isDisplayed': false,
+                    'appointments.$[outer].hoursAppointments.$[inner].squares': '1',
+                }
+            },
+            {
+                'arrayFilters': [
+                    { 'outer.doctorAppointmentsId': doctorAppointmentsId },
+                    {
+                        'inner.appointmentId': {
+                            "$in": arrayAppointmentsId
+                        }
+                    },
+                ]
+            }
+        )
+
+        const queryApptm = await PatientAppointments.updateOne(
+            {
+                'weekOfYear': weekOfYear,
+                'dayOfYear': dayOfYear,
+                'year': year,
+                'appointments': {
+                    '$elemMatch': {
+                        'doctorAppointmentsId': doctorAppointmentsId,
+                        'hoursAppointments.appointmentId': arrayAppointmentsId[0]
+                    },
+                }
+            },
+            {
+                '$set': {
+                    'appointments.$[outer].hoursAppointments.$[inner].squares': lengthSquares.toString(),
+                }
+            },
+            {
+                'arrayFilters': [
+                    { 'outer.doctorAppointmentsId': doctorAppointmentsId },
+                    { 'inner.appointmentId': arrayAppointmentsId[0] },
+                ]
+            }
+        )
+
+        if (resp && queryApptm) {
+            return res.status(200).json({ success: true, resp: resp, queryApptm: queryApptm })
+
+        }
+
+        return res.status(300).json({ success: false })
+    } catch (error) {
+        return res.status(400).json({ success: false })
     }
 
 }

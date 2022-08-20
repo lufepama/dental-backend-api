@@ -33,21 +33,13 @@ exports.getAllDoctors = async (req, res, next) => {
 
         const query = await Doctors.find({})
 
-        // To use this function as midleware in appointmentsController
-        if (next) {
-            req.doctors = query
-            next()
+        if (query) {
+            return res.status(200).json({ success: true, data: query })
         }
-        else {
-            if (query) {
-                return res.status(200).json({ success: true, data: query })
-            }
-            return res.status(200).json({ success: true })
-        }
-
-
+        return res.status(200).json({ success: true })
 
     } catch (error) {
+        console.log(error);
         res.status(400).json({ error: error, success: false })
     }
 

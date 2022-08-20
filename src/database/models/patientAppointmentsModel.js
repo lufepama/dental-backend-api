@@ -1,6 +1,7 @@
 module.exports = (mongoose) => {
 
     let schema = mongoose.Schema({
+        dayOfYear: { type: String },
         weekOfYear: { type: String },
         year: { type: String },
         appointments: [{
