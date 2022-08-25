@@ -158,10 +158,9 @@ exports.createAppointment = async (req, res) => {
         const weekOfYear = '34'
         const dayOfYear = '230'
         const year = '2022'
-        const doctorAppointmentsId = 'b6f573f4-2712-4b32-8508-32ee83dc4bae'
-        const arrayAppointmentsId = ['d105ccee-5694-4de2-bd7e-e872206036f5', 'cfa999ed-06d5-4744-8a3d-1128db647cd6', '45cacf4e-06d9-4d40-8e26-b4940b57b86b']
-
-        const lengthSquares = arrayAppointmentsId.length
+        const { doctorAppointmentsId, listOfRangedIds } = req.body
+        console.log(req.body)
+        const lengthSquares = listOfRangedIds.length
 
         const resp = await PatientAppointments.updateOne(
             {
@@ -172,7 +171,7 @@ exports.createAppointment = async (req, res) => {
                     '$elemMatch': {
                         'doctorAppointmentsId': doctorAppointmentsId,
                         'hoursAppointments.appointmentId': {
-                            "$in": arrayAppointmentsId
+                            "$in": listOfRangedIds
                         }
                     },
                 }
@@ -188,7 +187,7 @@ exports.createAppointment = async (req, res) => {
                     { 'outer.doctorAppointmentsId': doctorAppointmentsId },
                     {
                         'inner.appointmentId': {
-                            "$in": arrayAppointmentsId
+                            "$in": listOfRangedIds
                         }
                     },
                 ]
@@ -203,30 +202,31 @@ exports.createAppointment = async (req, res) => {
                 'appointments': {
                     '$elemMatch': {
                         'doctorAppointmentsId': doctorAppointmentsId,
-                        'hoursAppointments.appointmentId': arrayAppointmentsId[0]
+                        'hoursAppointments.appointmentId': listOfRangedIds[0]
                     },
                 }
             },
             {
                 '$set': {
+                    'appointments.$[outer].hoursAppointments.$[inner].isDisplayed': true,
                     'appointments.$[outer].hoursAppointments.$[inner].squares': lengthSquares.toString(),
                 }
             },
             {
                 'arrayFilters': [
                     { 'outer.doctorAppointmentsId': doctorAppointmentsId },
-                    { 'inner.appointmentId': arrayAppointmentsId[0] },
+                    { 'inner.appointmentId': listOfRangedIds[0] },
                 ]
             }
         )
 
         if (resp && queryApptm) {
             return res.status(200).json({ success: true, resp: resp, queryApptm: queryApptm })
-
         }
 
-        return res.status(300).json({ success: false })
+        return res.status(200).json({ success: true, data: req.body })
     } catch (error) {
+        console.log(error);
         return res.status(400).json({ success: false })
     }
 
