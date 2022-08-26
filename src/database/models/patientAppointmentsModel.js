@@ -16,6 +16,8 @@ module.exports = (mongoose) => {
                 patientId: { type: String },
                 description: { type: String },
                 specialist: { type: String },
+                patientFirstName: { type: String },
+                patientLastName: { type: String },
                 isDisplayed: { type: Boolean, default: true },
                 appointmentId: { type: String },
             }]

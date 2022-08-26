@@ -6,7 +6,13 @@ module.exports = (mongoose) => {
         qualification: { type: String },
         phoneNumber: { type: String },
         address: { type: String },
-        spectiality: { type: String },
+        spetiality: { type: String },
+        appointmentsAvailable: [
+            {
+                code:{type:String},
+                description:{type:String}
+            }
+        ]
     },
         { timestamps: true }
     )

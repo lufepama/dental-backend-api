@@ -10,8 +10,10 @@ exports.create = async (req, res) => {
 
     try {
         const userData = req.body
-        const fullNameInfo = userData.firstName + ' ' + userData.lastName
+        const fileNameToInclude = userData.firstName + ' ' + userData.lastName
+        const fullNameInfo = userData.firstName ? fileNameToInclude : ''
         const url = req.protocol + '://' + req.get('host')
+        const profileImgToInclude = req.file.filename ? url + DIR + req.file.filename : ''
         Patients.create({
             firstName: userData.firstName,
             lastName: userData.lastName,
@@ -21,10 +23,9 @@ exports.create = async (req, res) => {
             age: userData.age,
             address: userData.address,
             fullName: fullNameInfo,
-            profileImg: url + DIR + req.file.filename
+            profileImg: profileImgToInclude
         }, (err, newUser) => {
             if (err) { return res.status(400).json({ message: `Problemon... ${error}` }) }
-
         })
 
         res.status(200).json({ message: 'Register user', success: true })
