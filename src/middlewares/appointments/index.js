@@ -12,7 +12,7 @@ exports.doctorsToAppointment = async (req, res, next) => {
             next()
             return
         }
-        return res.status(200).json({ success: false, message: 'No doctors registered' })
+        return res.status(300).json({ success: false, message: 'No doctors registered' })
 
     } catch (error) {
         return res.status(400).json({ success: false, error: error })

@@ -52,7 +52,7 @@ const getHoursAppointmentBasicArray = () => {
 
 }
 
-exports.getAppointmentObject = (doctorName, doctorId = '') => {
+exports.getAppointmentObject = (doctorName, doctorId = '', appointmentsAvailable, speciality) => {
 
     const hours = getHoursAppointmentBasicArray()
 
@@ -61,7 +61,9 @@ exports.getAppointmentObject = (doctorName, doctorId = '') => {
         doctorName: doctorName,
         isActive: true,
         doctorAppointmentsId: uuidv4(),
-        hoursAppointments: hours
+        hoursAppointments: hours,
+        appointmentsAvailable: appointmentsAvailable,
+        speciality: speciality
     }
 
 }

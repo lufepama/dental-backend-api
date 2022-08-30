@@ -6,7 +6,7 @@ module.exports = (mongoose) => {
         qualification: { type: String },
         phoneNumber: { type: String },
         address: { type: String },
-        spetiality: { type: String },
+        speciality: { type: String },
         appointmentsAvailable: [
             {
                 code:{type:String},
@@ -20,5 +20,4 @@ module.exports = (mongoose) => {
     const Doctors = mongoose.model('doctors', schema)
 
     return Doctors
-
 }

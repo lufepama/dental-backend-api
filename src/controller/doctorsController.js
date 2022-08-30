@@ -168,7 +168,7 @@ exports.create = async (req, res) => {
         Doctors.create({
             firstName: doctorData.firstName,
             lastName: doctorData.lastName,
-            spetiality: doctorData.spetiality,
+            speciality: doctorSpeciality,
             qualification: doctorData.qualification,
             phoneNumber: doctorData.phoneNumber,
             address: doctorData.address,

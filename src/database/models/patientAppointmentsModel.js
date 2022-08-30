@@ -7,19 +7,31 @@ module.exports = (mongoose) => {
         appointments: [{
             doctorId: { type: String },
             doctorName: { type: String },
+            speciality: {type:String},
+            appointmentsAvailable:[{
+                code:{type:String},
+                description:{type:String},
+            }],
             isActive: { type: Boolean },
             doctorAppointmentsId: { type: String },
             hoursAppointments: [{
                 hour: { type: String },
+                highHour: { type: String },
                 squares: { type: String },
                 isOccupated: { type: Boolean, default: true },
-                patientId: { type: String },
-                description: { type: String },
+                appointmentCause: { type: String },
                 specialist: { type: String },
-                patientFirstName: { type: String },
-                patientLastName: { type: String },
                 isDisplayed: { type: Boolean, default: true },
                 appointmentId: { type: String },
+                listOfRangedIds: [String],
+                isConfirmed: { type: Boolean, default: false },
+                isCanceled: { type: Boolean, default: false },
+
+                patientFirstName: { type: String },
+                patientLastName: { type: String },
+                patientId: { type: String },
+                patientPhone: {type:String},
+                patientAddress: {type:String},
             }]
 
         }]
